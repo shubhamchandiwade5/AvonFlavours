@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avon Flavours — AI Prompt Hub</title>
+<link rel="icon" href="images/AF white logo.png" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E8272A;--red-dim:#9B1A1C;--red-glow:rgba(232,39,42,0.15);
+  --blue:#0057B8;--blue-bright:#1A7FE8;--blue-dim:rgba(0,87,184,0.2);
+  --white:#FFFFFF;--gray:#8A8A8A;
+  --dark:#0A0A0A;--dark2:#111111;--dark3:#181818;
+  --border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.18);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--white);min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;background:rgba(10,10,10,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.15em;color:var(--white);text-decoration:none}
+.nav-logo span{color:var(--red)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.nav-badge{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;background:var(--red);color:var(--white);padding:.3rem .8rem;border-radius:2px}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;transition:.3s}
+.mobile-menu{display:none;position:fixed;top:60px;left:0;right:0;background:rgba(10,10,10,0.98);border-bottom:1px solid var(--border);z-index:99;padding:1rem 1.5rem;flex-direction:column;gap:.5rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);text-decoration:none;padding:.6rem 0;border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border:none}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3rem 5rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 70% 40%,rgba(0,87,184,.12) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 20% 80%,rgba(232,39,42,.08) 0%,transparent 60%),var(--dark)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px}
+.hero-tag{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gray);margin-bottom:1.5rem;position:relative}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,9rem);line-height:.92;letter-spacing:.02em;position:relative}
+.hero-title .line1,.hero-title .line2{display:block;color:var(--white)}
+.hero-title .line3{display:block;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.3);font-size:clamp(4rem,11vw,10rem)}
+.hero-title .accent{color:var(--red)}
+.hero-desc{max-width:340px;font-size:.9rem;line-height:1.7;color:var(--gray);position:absolute;right:3rem;bottom:5rem}
+.hero-scroll{position:absolute;bottom:5rem;left:50%;transform:translateX(-50%);width:44px;height:44px;border:1px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s;animation:bounce 2s ease-in-out infinite}
+.hero-scroll:hover{border-color:var(--red)}
+.hero-scroll svg{width:16px;height:16px;stroke:var(--white);fill:none}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* STATS */
+.stats-bar{display:flex;flex-wrap:wrap;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat-item{flex:1;min-width:50%;padding:1.8rem 2rem;border-right:1px solid var(--border)}
+.stat-item:nth-child(2n){border-right:none}
+.stat-item:nth-child(3),.stat-item:nth-child(4){border-top:1px solid var(--border)}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;line-height:1;color:var(--white);display:block;margin-bottom:.3rem}
+.stat-num span{color:var(--red)}
+.stat-label{font-size:.72rem;color:var(--gray);letter-spacing:.08em;text-transform:uppercase}
+
+/* SEARCH */
+.search-section{padding:3rem 3rem;background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.search-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gray);margin-bottom:1rem;display:block;text-align:center}
+.search-wrapper{display:flex;max-width:700px;margin:0 auto;border:1px solid var(--border-hover);border-radius:4px;overflow:hidden;transition:border-color .2s}
+.search-wrapper:focus-within{border-color:var(--red)}
+.search-wrapper input{flex:1;background:transparent;border:none;outline:none;padding:.9rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--white)}
+.search-wrapper input::placeholder{color:var(--gray)}
+.search-btn{background:var(--red);border:none;cursor:pointer;padding:0 1.2rem;color:var(--white);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-family:'DM Sans',sans-serif;font-weight:500;transition:background .2s;white-space:nowrap}
+.search-btn:hover{background:#c0201f}
+
+/* TABS */
+.tab-nav{display:flex;border-bottom:1px solid var(--border);padding:0 3rem;background:var(--dark2);overflow-x:auto}
+.tab-btn{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;padding:1rem 1.5rem;background:transparent;border:none;color:var(--gray);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--white)}
+.tab-btn.active{color:var(--white);border-bottom-color:var(--red)}
+.tab-section{display:none}
+.tab-section.active{display:block}
+
+/* DEPT / MAIL FILTER */
+.dept-filter,.mail-filter{display:flex;gap:.5rem;flex-wrap:wrap;padding:1.8rem 3rem 0}
+.dept-btn,.mail-cat-btn{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1rem;border:1px solid var(--border);background:transparent;color:var(--gray);cursor:pointer;border-radius:2px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.dept-btn:hover,.mail-cat-btn:hover{border-color:var(--border-hover);color:var(--white)}
+.dept-btn.active{background:var(--red);border-color:var(--red);color:var(--white)}
+.mail-cat-btn.active{background:var(--blue);border-color:var(--blue);color:var(--white)}
+
+/* PROMPTS / MAILS SECTION */
+.prompts-section,.mails-section{padding:2.5rem 3rem 5rem}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:.5rem}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:.04em;line-height:1}
+.section-count{font-size:.75rem;color:var(--gray);letter-spacing:.1em}
+
+/* CARDS */
+.dept-group,.mail-group{margin-bottom:3rem;display:none}
+.dept-group.visible,.mail-group.visible{display:block}
+.dept-heading,.mail-group-heading{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.dept-icon,.mail-group-icon{width:34px;height:34px;background:var(--red-glow);border:1px solid rgba(232,39,42,.3);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.mail-group-icon{background:var(--blue-dim);border-color:rgba(0,87,184,.4)}
+.dept-name,.mail-group-name{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;color:var(--white)}
+.dept-sub,.mail-group-sub{font-size:.72rem;color:var(--gray);margin-left:auto}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.prompt-card,.mail-card{background:var(--dark2);padding:1.4rem;cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
+.prompt-card::before,.mail-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;transition:height .25s ease}
+.prompt-card::before{background:var(--red)}
+.mail-card::before{background:var(--blue)}
+.prompt-card:hover,.mail-card:hover{background:var(--dark3)}
+.prompt-card:hover::before,.mail-card:hover::before{height:100%}
+.card-tag{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:.5rem;font-family:'DM Mono',monospace}
+.mail-card .card-tag{color:#5fa8f5}
+.card-title{font-size:.88rem;font-weight:500;color:var(--white);line-height:1.4;margin-bottom:.4rem}
+.card-preview{font-size:.76rem;color:var(--gray);line-height:1.5;margin-bottom:.9rem}
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.copy-btn,.mail-copy-btn{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);background:transparent;border:1px solid var(--border);border-radius:2px;padding:.28rem .7rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.copy-btn:hover{border-color:var(--red);color:var(--red)}
+.mail-copy-btn:hover{border-color:var(--blue-bright);color:var(--blue-bright)}
+.copy-btn.copied,.mail-copy-btn.copied{border-color:#2ecc71;color:#2ecc71}
+.card-arrow{color:var(--gray);font-size:.85rem;transition:color .2s,transform .2s}
+.prompt-card:hover .card-arrow,.mail-card:hover .card-arrow{color:var(--white);transform:translate(2px,-2px)}
+.mail-type-badge{display:inline-flex;align-items:center;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;padding:.2rem .55rem;border-radius:2px;font-family:'DM Mono',monospace;margin-bottom:.4rem}
+.mail-type-badge.internal{background:rgba(0,87,184,.15);color:#5fa8f5;border:1px solid rgba(0,87,184,.3)}
+.mail-type-badge.external{background:rgba(232,39,42,.12);color:#f06060;border:1px solid rgba(232,39,42,.25)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--dark3);border:1px solid var(--border-hover);border-radius:4px;max-width:680px;width:100%;max-height:88vh;overflow-y:auto;transform:translateY(20px);transition:transform .25s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:1.3rem 1.6rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.modal-dept{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:.35rem;font-family:'DM Mono',monospace}
+.modal-dept.blue{color:var(--blue-bright)}
+.modal-title{font-size:1.05rem;font-weight:500;color:var(--white)}
+.modal-close{background:transparent;border:1px solid var(--border);color:var(--gray);cursor:pointer;border-radius:2px;width:28px;height:28px;font-size:.9rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-body{padding:1.5rem}
+.modal-prompt{background:var(--dark);border:1px solid var(--border);border-radius:3px;padding:1.1rem 1.2rem;font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.75;color:#C8D8F0;white-space:pre-wrap;word-break:break-word;margin-bottom:1.2rem}
+.modal-hint{font-size:.76rem;color:var(--gray);line-height:1.6;border-left:2px solid var(--red-dim);padding-left:.8rem;margin-bottom:1.2rem}
+.modal-copy-btn{width:100%;padding:.85rem;background:var(--red);border:none;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:background .2s;font-weight:500}
+.modal-copy-btn:hover{background:#c0201f}
+.modal-copy-btn.copied{background:#1a8c50}
+.modal-copy-btn.blue-btn{background:var(--blue)}
+.modal-copy-btn.blue-btn:hover{background:#004a9e}
+
+/* FOOTER */
+footer{padding:1.8rem 3rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);flex-wrap:wrap;gap:.5rem}
+.footer-brand{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.15em}
+.footer-brand span{color:var(--red)}
+.footer-note{font-size:.68rem;color:var(--gray)}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:1rem 1.2rem}
+  .nav-links,.nav-badge{display:none}
+  .nav-hamburger{display:flex}
+  .hero{padding:0 1.2rem 3.5rem}
+  .hero-desc{position:static;max-width:100%;margin-top:1.2rem}
+  .stats-bar .stat-item{min-width:50%}
+  .search-section{padding:2rem 1.2rem}
+  .tab-nav{padding:0 1.2rem}
+  .dept-filter,.mail-filter{padding:1.2rem 1.2rem 0}
+  .prompts-section,.mails-section{padding:1.8rem 1.2rem 3rem}
+  .cards-grid{grid-template-columns:1fr}
+  .dept-sub,.mail-group-sub{display:none}
+  footer{padding:1.2rem;flex-direction:column;text-align:center}
+  .modal{max-height:92vh}
+  .modal-body{padding:1.1rem}
+  .modal-prompt{font-size:.72rem}
+}
+@media(min-width:769px){
+  .stat-item:nth-child(2n){border-right:1px solid var(--border)}
+  .stat-item{min-width:25%;border-top:none!important}
+  .stat-item:last-child{border-right:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#"><span>AVON</span> FLAVOURS</a>
+  <ul class="nav-links">
+    <li><a href="#search">Prompts</a></li>
+    <li><a href="#mails">Mail Templates</a></li>
+    <li><a href="#departments">Departments</a></li>
+  </ul>
+  <span class="nav-badge" style="display:none" id="navBadgeDesktop">AI Hub</span>
+  <div class="nav-hamburger" onclick="toggleMenu()" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#search" onclick="closeMenu()">AI Prompts</a>
+  <a href="#mails" onclick="closeMenu()">Mail Templates</a>
+  <a href="#departments" onclick="closeMenu()">Departments</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <span class="hero-tag">Avon Flavours· Internal AI Tools · Est. 1980</span>
+  <h1 class="hero-title">
+    <span class="line1">WRITE</span>
+    <span class="line2">SMARTER</span>
+    <span class="line3 accent">FASTER</span>
+  </h1>
+  <p class="hero-desc">Ready-to-use AI prompts and mail templates for every department at Avon Flavours — exports, billing, R&D, HR and more. Copy, customise, done.</p>
+  <div class="hero-scroll" onclick="document.getElementById('search').scrollIntoView({behavior:'smooth'})">
+    <svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-num">9<span>+</span></span><span class="stat-label">Departments</span></div>
+  <div class="stat-item"><span class="stat-num">80<span>+</span></span><span class="stat-label">AI Prompts</span></div>
+  <div class="stat-item"><span class="stat-num">60<span>+</span></span><span class="stat-label">Mail Templates</span></div>
+  <div class="stat-item"><span class="stat-num">B<span>2</span>B</span><span class="stat-label">Focused</span></div>
+</div>
+
+<!-- SEARCH -->
+<section class="search-section" id="search">
+  <span class="search-label">Find prompts and mail templates instantly</span>
+  <div class="search-wrapper">
+    <input type="text" id="searchInput" placeholder="Search: invoice, leave, sample, freight, complaint…" oninput="handleSearch()">
+    <button class="search-btn" onclick="handleSearch()">Search</button>
+  </div>
+</section>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('prompts',this)">AI Prompts</button>
+  <button class="tab-btn" onclick="switchTab('mails',this)" id="mailTabBtn">Mail Templates</button>
+</div>
+
+<!-- ===== PROMPTS TAB ===== -->
+<div class="tab-section active" id="tab-prompts">
+  <div class="dept-filter" id="departments">
+    <button class="dept-btn active" onclick="filterDept('all',this)">All</button>
+    <button class="dept-btn" onclick="filterDept('exports',this)">Exports</button>
+    <button class="dept-btn" onclick="filterDept('billing',this)">Billing</button>
+    <button class="dept-btn" onclick="filterDept('sales',this)">Sales</button>
+    <button class="dept-btn" onclick="filterDept('backend',this)">Backend Sales</button>
+    <button class="dept-btn" onclick="filterDept('purchase',this)">Purchase</button>
+    <button class="dept-btn" onclick="filterDept('accounts',this)">Accounts</button>
+    <button class="dept-btn" onclick="filterDept('marketing',this)">Marketing</button>
+    <button class="dept-btn" onclick="filterDept('dispatch',this)">Dispatch</button>
+    <button class="dept-btn" onclick="filterDept('rd',this)">R&amp;D</button>
+    <button class="dept-btn" onclick="filterDept('hr',this)">HR &amp; Admin</button>
+  </div>
+  <section class="prompts-section" id="prompts">
+    <div class="section-header">
+      <h2 class="section-title">PROMPT <span style="color:var(--red)">LIBRARY</span></h2>
+      <span class="section-count" id="promptCount">Loading…</span>
+    </div>
+    <div id="promptsContainer"></div>
+  </section>
+</div>
+
+<!-- ===== MAILS TAB ===== -->
+<div class="tab-section" id="tab-mails">
+  <div class="mail-filter" id="mails">
+    <button class="mail-cat-btn active" onclick="filterMail('all',this)">All Mails</button>
+    <button class="mail-cat-btn" onclick="filterMail('internal',this)">Internal</button>
+    <button class="mail-cat-btn" onclick="filterMail('external',this)">External</button>
+    <button class="mail-cat-btn" onclick="filterMail('leave',this)">Leave &amp; HR</button>
+    <button class="mail-cat-btn" onclick="filterMail('client',this)">Client</button>
+    <button class="mail-cat-btn" onclick="filterMail('vendor',this)">Vendor</button>
+    <button class="mail-cat-btn" onclick="filterMail('ops',this)">Operations</button>
+    <button class="mail-cat-btn" onclick="filterMail('escalation',this)">Escalation</button>
+  </div>
+  <section class="mails-section">
+    <div class="section-header">
+      <h2 class="section-title">MAIL <span style="color:var(--blue-bright)">TEMPLATES</span></h2>
+      <span class="section-count" id="mailCount">Loading…</span>
+    </div>
+    <div id="mailsContainer"></div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-brand"><span>AVON</span> FLAVOURS — AI HUB</span>
+  <span class="footer-note">Internal tool · Avon Flavours Pvt. Ltd.</span>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-dept" id="modalDept"></div>
+        <div class="modal-title" id="modalTitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-prompt" id="modalPrompt"></div>
+      <div class="modal-hint" id="modalHint"></div>
+      <button class="modal-copy-btn" id="modalCopyBtn" onclick="copyModal()">Copy to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────
+var currentDept = 'all';
+var currentMailCat = 'all';
+var currentSearch = '';
+var currentItem = null;
+var currentModalType = 'prompt';
+
+// ── Mobile menu ────────────────────────────────────────
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// ── Tabs ───────────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-section').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ── Search ─────────────────────────────────────────────
+function handleSearch() {
+  currentSearch = document.getElementById('searchInput').value.toLowerCase().trim();
+  renderPrompts();
+  renderMails();
+}
+
+// ── DATA: PROMPTS ──────────────────────────────────────
+var PROMPTS = [
+  {dept:'exports',deptLabel:'Exports',icon:'🚢',tag:'Proforma Invoice',title:'Send Proforma Invoice to Overseas Buyer',preview:'Draft a professional proforma invoice email with terms.',hint:'Replace [BUYER], [PRODUCT], [QTY], [PRICE], [PORT], [INCOTERM].',prompt:'Act as an export executive at Avon Flavours, a B2B manufacturer of seasonings and flavours based in India. Draft a professional proforma invoice email to [BUYER NAME, COMPANY, COUNTRY] for [PRODUCT NAME] — [QUANTITY] MT at [PRICE] per MT, [INCOTERM] [PORT]. Payment terms: [100% advance / LC at sight / 30 days]. Mention HS code, packaging, and expected shipment date. Tone: formal, confident, trade-ready.'},
+  {dept:'exports',deptLabel:'Exports',icon:'🚢',tag:'Buyer Follow-Up',title:'Follow-Up After Sending Sample to International Buyer',preview:'Polite follow-up after sample dispatch to overseas lead.',hint:'Replace [BUYER], [SAMPLE SENT], [DATE SENT], [APPLICATION].',prompt:'Act as an export sales executive at Avon Flavours. Write a follow-up email to [BUYER NAME] at [COMPANY, COUNTRY] who received our seasoning/flavour sample for [APPLICATION e.g. snack, chips, instant noodles] on [DATE]. Politely ask for their feedback, suggest a call, and offer to adjust the profile if needed. Keep it brief and professional.'},
+  {dept:'exports',deptLabel:'Exports',icon:'🚢',tag:'Freight Coordination',title:'Instruction Email to Freight Forwarder',preview:'Instruct forwarder on shipment pickup and documentation.',hint:'Fill shipment details, forwarder name, destination port.',prompt:'Write a clear instruction email to our freight forwarder [FORWARDER NAME] for the shipment of [PRODUCT] to [BUYER, COUNTRY]. Shipment: [NO. OF CARTONS / PALLETS], [WEIGHT]. Documents required: Commercial Invoice, Packing List, COA, COO, FSSAI, Phytosanitary if applicable. Pickup from: Avon Flavours, [FACTORY ADDRESS]. Target ETD: [DATE]. Port of loading: [PORT]. Request booking confirmation and BL draft.'},
+  {dept:'exports',deptLabel:'Exports',icon:'🚢',tag:'COO Request',title:'Request Certificate of Origin from Chamber',preview:'Email to Chamber of Commerce for COO issuance.',hint:'Provide shipment and invoice details.',prompt:'Draft an email to [Chamber of Commerce / FIEO / DGFT office] requesting a Certificate of Origin for our shipment. Invoice No.: [INV NO.], dated [DATE]. Exporter: Avon Flavours Pvt. Ltd. Consignee: [BUYER NAME, COUNTRY]. Product: [PRODUCT NAME], HS Code: [HS CODE]. Value: USD [AMOUNT]. Attach: Invoice copy, Packing List. Request earliest issuance. Professional, concise format.'},
+  {dept:'exports',deptLabel:'Exports',icon:'🚢',tag:'Buyer Complaint',title:'Respond to Overseas Buyer Quality Complaint',preview:'Professional reply to international buyer raising quality issue.',hint:'Customize product, complaint nature, and resolution offered.',prompt:'Act as an export quality manager at Avon Flavours. Write a professional email responding to [BUYER NAME] from [COMPANY, COUNTRY] who raised a complaint that [SPECIFIC COMPLAINT e.g. flavour intensity was lower than approved sample, colour variation]. Acknowledge concern without admitting liability, request lab report/photos, assure corrective action, and offer [credit note / replacement / adjustment in next order]. Tone: empathetic, professional, solution-focused.'},
+  {dept:'exports',deptLabel:'Exports',icon:'🚢',tag:'New Market Intro',title:'Cold Introduction Email to New International Buyer',preview:'First contact email to overseas distributor or manufacturer.',hint:'Personalize buyer country, product interest, and application.',prompt:'Write a compelling cold outreach email from Avon Flavours to [COMPANY NAME] in [COUNTRY], a [distributor / food manufacturer / private label company]. Introduce us as a leading Indian B2B manufacturer of seasonings and flavours. Highlight: 20+ years manufacturing expertise, custom flavour development, export experience, competitive pricing, FSSAI and ISO certified. Offer to send samples. Sharp, professional, under 200 words.'},
+  {dept:'billing',deptLabel:'Billing',icon:'🧾',tag:'Invoice Email',title:'Send Invoice to Domestic B2B Client',preview:'Standard invoice dispatch email with payment details.',hint:'Replace client name, invoice number, amount, and due date.',prompt:'Act as a billing executive at Avon Flavours. Write an email to [CLIENT NAME, COMPANY] sharing Invoice No. [INV NO.] dated [DATE] for [PRODUCT/SERVICE] amounting to Rs.[AMOUNT] + GST Rs.[GST AMOUNT] = Total Rs.[TOTAL]. Payment due by [DATE]. Payment details: [Bank Name, Account No., IFSC, UPI if applicable]. Request confirmation of receipt and prompt payment. Tone: professional, polite.'},
+  {dept:'billing',deptLabel:'Billing',icon:'🧾',tag:'1st Reminder',title:'First Gentle Payment Reminder',preview:'Soft reminder for invoice approaching or past due date.',hint:'Use for first reminder only — keep it friendly.',prompt:'Write a polite first payment reminder email from Avon Flavours Billing to [CLIENT NAME] for Invoice No. [INV NO.] of Rs.[AMOUNT] which was due on [DUE DATE]. Mention we understand they may be busy and request payment at the earliest. Attach a copy of the invoice. Keep tone warm and professional.'},
+  {dept:'billing',deptLabel:'Billing',icon:'🧾',tag:'2nd Reminder',title:'Second Firm Payment Reminder',preview:'More direct reminder for significantly overdue payment.',hint:'Use after 1st reminder has been ignored for 7+ days.',prompt:'Write a firm but professional second payment reminder email from Avon Flavours to [CLIENT NAME]. Invoice No. [INV NO.] for Rs.[AMOUNT] was due on [DUE DATE] and remains unpaid despite our earlier reminder sent on [1ST REMINDER DATE]. Request immediate payment and state further delays may affect supply continuity. Provide payment details again. Tone: assertive but not threatening.'},
+  {dept:'billing',deptLabel:'Billing',icon:'🧾',tag:'Credit Note',title:'Issue Credit Note to Client',preview:'Formal credit note email for returns, overcharge, or discount.',hint:'Specify reason clearly: return, rate difference, or short supply.',prompt:'Draft a formal credit note email from Avon Flavours Billing to [CLIENT NAME]. Credit Note No.: [CN NO.], dated [DATE]. Against Invoice No.: [INV NO.]. Reason: [goods returned / rate difference / quantity short supplied / quality deduction]. Credit amount: Rs.[AMOUNT] + GST Rs.[GST] = Rs.[TOTAL]. State how credit will be adjusted: [next invoice deduction / refund]. Tone: factual, courteous.'},
+  {dept:'billing',deptLabel:'Billing',icon:'🧾',tag:'GST Query',title:'Respond to Client GST Clarification Query',preview:'Clear explanation of GST charges on the invoice.',hint:'Useful when client questions GST rate or HSN code.',prompt:'Write a professional email from Avon Flavours Billing team to [CLIENT NAME] addressing their query about GST on Invoice No. [INV NO.]. Clarify: Product HSN Code is [HSN], applicable GST rate is [RATE]% ([CGST+SGST or IGST]). Explain why this rate applies under GST law for food flavourings/seasonings. Offer to share GSTN number. Suggest they consult their CA if needed. Tone: helpful, clear, professional.'},
+  {dept:'billing',deptLabel:'Billing',icon:'🧾',tag:'E-Way Bill',title:'Inform Client About E-Way Bill Details',preview:'Share e-way bill number and transporter details.',hint:'Fill vehicle, EWB number, and dispatch date.',prompt:'Write an email to [CLIENT NAME] sharing the E-Way Bill details for their order. EWB No.: [NUMBER], valid till [DATE]. Transporter: [NAME]. Vehicle No.: [VEH NO.]. Expected delivery: [DATE]. Invoice No.: [INV NO.]. Ask them to ensure someone is available to receive goods and sign the delivery receipt. Tone: operational, concise.'},
+  {dept:'sales',deptLabel:'Sales',icon:'📈',tag:'Cold Outreach',title:'Cold Email to Snack Manufacturer',preview:'Prospecting email to food/snack company for seasoning supply.',hint:'Personalize with company name, product type, and region.',prompt:'Act as a B2B sales executive at Avon Flavours. Write a cold outreach email to [CONTACT NAME] at [COMPANY NAME], a [snack / namkeen / chips / biscuit / instant noodle] manufacturer in [CITY/REGION]. Introduce Avon Flavours as a premium seasoning and flavour manufacturer. Mention custom flavour development, consistent quality, flexible MOQ, and competitive pricing. Offer free samples. Under 180 words, engaging, professional. Subject line included.'},
+  {dept:'sales',deptLabel:'Sales',icon:'📈',tag:'Sample Follow-Up',title:'Follow-Up After Sending Sample to Domestic Client',preview:'Chase feedback after sample was sent to prospect.',hint:'Mention specific product sent and application.',prompt:'Write a follow-up email from Avon Flavours sales team to [CONTACT NAME] at [COMPANY] who received our [PRODUCT NAME] sample for their [APPLICATION] on [DATE]. Check if they have had a chance to trial it. Ask for feedback on flavour profile, intensity, and shelf life performance. Offer to arrange a call, visit, or send a revised sample. Tone: enthusiastic but not pushy. Max 150 words.'},
+  {dept:'sales',deptLabel:'Sales',icon:'📈',tag:'Quotation Email',title:'Send Formal Price Quotation',preview:'Price quote email for a specific flavour/seasoning product.',hint:'Fill product, quantity bracket, and validity date.',prompt:'Draft a formal quotation email from Avon Flavours to [CLIENT NAME, COMPANY]. Quote for: [PRODUCT NAME], [QUANTITY/ORDER SIZE], Rate: Rs.[RATE] per kg. Validity: [DATE]. MOQ: [KG]. Packaging: [TYPE]. Payment terms: [ADVANCE / NET 30]. Lead time: [DAYS]. GST: [%] extra. Mention pricing may vary based on raw material costs and encourage placing order before validity expires.'},
+  {dept:'sales',deptLabel:'Sales',icon:'📈',tag:'Lost Client',title:'Re-Engagement Email to Lapsed Client',preview:'Win back a client who stopped ordering.',hint:'Use with a client inactive for 3+ months.',prompt:'Write a re-engagement email from Avon Flavours to [CLIENT NAME] at [COMPANY], a previous client who has not placed an order in [X MONTHS]. Acknowledge the gap naturally. Highlight recent improvements: [new products / better pricing / improved lead time / new certifications]. Offer a special incentive: [discount / free sample of new product]. Tone: warm, confident, non-desperate.'},
+  {dept:'sales',deptLabel:'Sales',icon:'📈',tag:'Price Increase',title:'Inform Client About Price Revision',preview:'Professional notice of price increase due to RM cost rise.',hint:'Be transparent about reasons — clients respect honesty.',prompt:'Draft a professional email from Avon Flavours sales team to [CLIENT NAME] informing them of a price revision effective [DATE]. Reason: increase in [raw material / packaging / freight] costs by approximately [X%]. New rate: Rs.[NEW RATE] per kg for [PRODUCT]. Current orders placed before [DATE] will be honoured at existing prices. Thank them for continued business. Offer to discuss if they want to lock in rates with a longer-term order.'},
+  {dept:'backend',deptLabel:'Backend Sales',icon:'⚙️',tag:'Order Confirmation',title:'Send Order Acknowledgement to Client',preview:'Confirm receipt and processing of client purchase order.',hint:'Use immediately after PO receipt.',prompt:'Write an order acknowledgement email from Avon Flavours Backend Sales to [CLIENT NAME] confirming receipt of their Purchase Order No. [PO NO.] dated [DATE] for [PRODUCT] — [QUANTITY] at Rs.[RATE]. Confirm: Expected dispatch by [DATE], Vehicle arrangement pending/confirmed, Payment status: [RECEIVED / AWAITED]. Mention any special instructions noted. Tone: prompt, organized, professional.'},
+  {dept:'backend',deptLabel:'Backend Sales',icon:'⚙️',tag:'Short Dispatch',title:'Inform Client of Partial/Short Dispatch',preview:'Notify client that full order quantity cannot be dispatched.',hint:'Always give a clear reason and revised date.',prompt:'Write an email from Avon Flavours to [CLIENT NAME] informing them that their order [PO NO.] for [PRODUCT] could not be dispatched in full. Quantity dispatched: [QTY]. Short by: [SHORTAGE QTY] due to [production delay / raw material shortage / packaging issue]. Balance quantity will be dispatched by [REVISED DATE]. Apologize for the inconvenience. Mention LR/docket no. for dispatched portion. Tone: honest, apologetic, reassuring.'},
+  {dept:'backend',deptLabel:'Backend Sales',icon:'⚙️',tag:'Reorder Reminder',title:'Reorder Reminder to Regular Client',preview:'Proactive reminder to client based on consumption pattern.',hint:'Use for clients on monthly or fortnightly ordering cycles.',prompt:'Write a reorder reminder email from Avon Flavours to [CLIENT NAME]. Based on their usual [MONTHLY/FORTNIGHTLY] order pattern, they may be running low on [PRODUCT NAME]. Last order was [DATE] for [QTY]. Prompt them to share their next PO to avoid production disruption. Lead time is [X DAYS]. Offer to lock in current rates if order is placed this week. Tone: helpful, proactive, relationship-driven.'},
+  {dept:'backend',deptLabel:'Backend Sales',icon:'⚙️',tag:'Spec Sheet',title:'Share Product Specification Sheet with Client',preview:'Email to send TDS / specification document.',hint:'Useful for new product inquiries or regulatory requests.',prompt:'Write an email from Avon Flavours to [CLIENT NAME] sharing the Technical Data Sheet (TDS) / Product Specification for [PRODUCT NAME]. Highlight key specs: appearance, flavour profile, moisture %, particle size, shelf life, packaging, storage conditions, allergen info. Mention it meets [FSSAI / Halal / Kosher / ISO] requirements as applicable. Ask if they need any other regulatory documents. Tone: informative, professional.'},
+  {dept:'purchase',deptLabel:'Purchase',icon:'🛒',tag:'Supplier Enquiry',title:'New Supplier Enquiry for Raw Material',preview:'Request quotation from new raw material supplier.',hint:'Use when sourcing new RM or spice ingredient.',prompt:'Write a supplier enquiry email from Avon Flavours Purchase team to [SUPPLIER NAME] requesting a quotation for [RAW MATERIAL / SPICE / INGREDIENT]. Specify: required quantity [KG/MT per month], quality specification [Grade/Purity], packaging preferred, required certifications [FSSAI/Organic/ISO], and delivery to [CITY/WAREHOUSE]. Request samples along with quote. Mention we are a growing B2B manufacturer looking for long-term partnerships.'},
+  {dept:'purchase',deptLabel:'Purchase',icon:'🛒',tag:'Rate Negotiation',title:'Negotiate Better Rate with Existing Supplier',preview:'Email to push back on supplier pricing or improve terms.',hint:'Back with volume commitment or early payment offer.',prompt:'Write a negotiation email from Avon Flavours Purchase team to [SUPPLIER NAME]. We currently purchase [PRODUCT] at Rs.[CURRENT RATE]/kg. Request a revised rate of Rs.[TARGET RATE]/kg based on: [increased volume commitment / prompt payment track record / market pricing from competitor at Rs.X]. If rate cannot be revised, request improved payment terms or extended credit period. Tone: confident, respectful, firm.'},
+  {dept:'purchase',deptLabel:'Purchase',icon:'🛒',tag:'Quality Complaint',title:'Raise Quality Complaint to Supplier',preview:'Formal complaint for substandard raw material received.',hint:'Attach lab report or photos if available.',prompt:'Write a formal quality complaint email from Avon Flavours Purchase department to [SUPPLIER NAME] regarding [RAW MATERIAL] received on [DATE] against PO No. [PO NO.]. Issue: [DESCRIBE DEFECT e.g. moisture above spec / adulteration / foreign matter]. Quantity affected: [KG]. Request: [replacement / credit note / quality report within 48 hours]. State we are holding payment until resolution. Tone: firm, factual, non-compromising on quality.'},
+  {dept:'purchase',deptLabel:'Purchase',icon:'🛒',tag:'Rate Contract',title:'Propose Annual Rate Contract to Supplier',preview:'Offer annual contract in exchange for fixed pricing.',hint:'Good for locking in prices on volatile ingredients.',prompt:'Draft an email from Avon Flavours to [SUPPLIER NAME] proposing an Annual Rate Contract for [PRODUCT] for the period [START DATE] to [END DATE]. Offer: [X MT per month] guaranteed offtake at a fixed rate of Rs.[PROPOSED RATE]/kg. Request price protection clause for at least [X months]. Mention advantages to supplier: predictable revenue, priority vendor status, faster payment. Ask for acceptance and draft contract.'},
+  {dept:'accounts',deptLabel:'Accounts',icon:'💼',tag:'TDS Intimation',title:'TDS Deduction Intimation to Vendor',preview:'Inform vendor of TDS deduction on their payment.',hint:'Mandatory to communicate TDS deduction formally.',prompt:'Write an email from Avon Flavours Accounts team to [VENDOR NAME] informing them of TDS deduction on Invoice No. [INV NO.] amounting to Rs.[GROSS]. TDS deducted @ [RATE]% under Section [194C/194J/194Q] = Rs.[TDS AMOUNT]. Net amount paid: Rs.[NET AMOUNT] on [DATE] via [NEFT/RTGS]. Form 26AS will reflect the credit in the relevant quarter. Request to verify in 26AS and contact us for any discrepancy.'},
+  {dept:'accounts',deptLabel:'Accounts',icon:'💼',tag:'Balance Confirmation',title:'Request Balance Confirmation from Client or Vendor',preview:'Year-end or quarter-end balance confirmation request.',hint:'Usually sent during audits or financial year-end.',prompt:'Write a formal email from Avon Flavours Accounts department to [CLIENT/VENDOR NAME] requesting confirmation of outstanding balance as of [DATE]. As per our books, the balance payable/receivable is Rs.[AMOUNT]. Request confirmation in writing, or share their ledger if there is a discrepancy. Required for statutory audit / internal reconciliation. Deadline: [DATE].'},
+  {dept:'accounts',deptLabel:'Accounts',icon:'💼',tag:'GST Reminder',title:'GST Filing Reminder to Internal Team',preview:'Reminder to team about upcoming GST return filing.',hint:'GSTR-1, GSTR-3B, or annual filing reminder.',prompt:'Write an internal reminder email from Avon Flavours Accounts Head to relevant team members about the upcoming GST return filing deadline. Return type: [GSTR-1 / GSTR-3B / GSTR-9]. Due date: [DATE]. Action required from [Sales/Purchase/Billing] teams: [share invoice data / reconcile purchase ledger / confirm ITC claims]. Penalties for late filing: [MENTION AMOUNT]. Request all data by [INTERNAL DEADLINE].'},
+  {dept:'accounts',deptLabel:'Accounts',icon:'💼',tag:'Vendor Payment',title:'Vendor Payment Confirmation',preview:'Confirm payment made to supplier with transaction details.',hint:'Always send after every payment for clear records.',prompt:'Write an email from Avon Flavours Accounts to [VENDOR NAME] confirming payment for Invoice No. [INV NO.] for Rs.[AMOUNT]. Payment made on [DATE] via [NEFT/RTGS/Cheque]. Transaction ID / Cheque No.: [NUMBER]. Bank: [BANK NAME]. Request acknowledgement of receipt. Mention if TDS was deducted.'},
+  {dept:'marketing',deptLabel:'Marketing',icon:'📣',tag:'LinkedIn Post',title:'LinkedIn Post — New Product Launch',preview:'Engaging post for launching a new seasoning or flavour.',hint:'Keep it crisp, use hashtags, add a call-to-action.',prompt:'Write a LinkedIn post for Avon Flavours announcing the launch of our new product: [PRODUCT NAME] — a [DESCRIPTION e.g. smoky chilli masala blend for snack manufacturers]. Highlight: unique flavour profile, application suitability, B2B availability, sample offer. Tone: confident, industry-expert, not salesy. Max 150 words. Include 4-5 relevant hashtags. End with a CTA to contact us or DM for samples.'},
+  {dept:'marketing',deptLabel:'Marketing',icon:'📣',tag:'Trade Show',title:'Trade Show Participation Announcement',preview:'Post or email announcing Avon Flavours at a food expo.',hint:'Fill expo name, dates, stall number.',prompt:'Write a pre-event announcement email and social media post for Avon Flavours participation in [EXPO NAME] on [DATES] at [VENUE]. Stall No.: [NUMBER]. Highlight what we will showcase: new flavour range, live demonstrations, sampling. Invite existing clients and prospects to visit. Offer to schedule a meeting at the stall. Provide both an email version and a shorter social post version.'},
+  {dept:'marketing',deptLabel:'Marketing',icon:'📣',tag:'Brochure Copy',title:'Product Brochure Text for Seasoning Range',preview:'Compelling copy for a B2B product brochure or catalogue.',hint:'Specify the product range and target industry.',prompt:'Write persuasive B2B product brochure copy for Avon Flavours [PRODUCT LINE e.g. Snack Seasonings / Masala Blends / Flavour Enhancers]. Include: Brand introduction (50 words), Product range overview with key benefits, Why choose Avon Flavours (5 differentiators), Call-to-action. Target audience: snack manufacturers, food processors, FMCG companies. Tone: authoritative, quality-focused.'},
+  {dept:'marketing',deptLabel:'Marketing',icon:'📣',tag:'Festive Greeting',title:'Festive Greeting Email to Clients',preview:'Seasonal wishes to maintain client relationships.',hint:'Works for Diwali, New Year, Eid, Christmas.',prompt:'Write a warm festive greeting email from Avon Flavours to our valued B2B clients on the occasion of [FESTIVAL NAME]. Keep it genuine and brief. Thank them for their partnership, wish them well personally and professionally. Mention we look forward to serving them in the coming season. Avoid being overly promotional. Signature: Team Avon Flavours.'},
+  {dept:'marketing',deptLabel:'Marketing',icon:'📣',tag:'Case Study',title:'Draft Client Success Case Study',preview:'Short case study showing how a client benefited.',hint:'Share with prospects — powerful B2B sales tool.',prompt:'Write a short B2B case study for Avon Flavours about how we helped [CLIENT TYPE e.g. a regional snack manufacturer] solve [PROBLEM e.g. inconsistent flavour, high cost of imported seasoning]. Structure: Challenge, Our Solution (product + custom development), Results (e.g. cost saving %, consistent quality, production growth). Keep it under 300 words. Anonymize client if needed. Tone: credible, fact-based, outcome-driven.'},
+  {dept:'dispatch',deptLabel:'Dispatch',icon:'🚚',tag:'LR Sharing',title:'Share LR / Docket Number with Client',preview:'Email with lorry receipt details after goods are dispatched.',hint:'Send immediately after goods leave the factory.',prompt:'Write a dispatch intimation email from Avon Flavours to [CLIENT NAME] confirming dispatch of their order. PO No.: [PO NO.]. Product: [PRODUCT NAME]. Quantity: [KG/CARTONS]. Dispatch Date: [DATE]. Vehicle No.: [VEHICLE NO.]. Transporter: [TRANSPORTER NAME]. LR No. / Docket No.: [NUMBER]. Estimated delivery: [DATE]. Ask them to confirm receipt and sign the delivery challan.'},
+  {dept:'dispatch',deptLabel:'Dispatch',icon:'🚚',tag:'POD Request',title:'Request Proof of Delivery from Transporter',preview:'Chase transporter for signed POD after delivery.',hint:'Send 1-2 days after expected delivery date.',prompt:'Write an email from Avon Flavours Dispatch team to [TRANSPORTER NAME] requesting Proof of Delivery (POD) for the shipment delivered to [CLIENT NAME] in [CITY]. LR No.: [LR NO.]. Delivery was expected by [DATE]. Request scanned signed copy of delivery challan urgently for billing/audit purposes. Mention POD is required before processing their freight payment. Tone: firm, professional, time-sensitive.'},
+  {dept:'dispatch',deptLabel:'Dispatch',icon:'🚚',tag:'Vehicle Delay',title:'Inform Client of Vehicle / Dispatch Delay',preview:'Proactive communication when dispatch is delayed.',hint:'Always inform before the client calls to ask.',prompt:'Write an apology email from Avon Flavours Dispatch to [CLIENT NAME] informing them that dispatch of order [PO NO.] has been delayed by [X DAYS] due to [reason: vehicle breakdown / driver unavailability / road conditions / production delay]. Revised dispatch date: [DATE]. Apologize for the inconvenience. Offer any support such as advance documents. Tone: proactive, honest, accountable.'},
+  {dept:'dispatch',deptLabel:'Dispatch',icon:'🚚',tag:'Export Docs Courier',title:'Courier Export Documents to Buyer or Forwarder',preview:'Email confirming courier of original export documents.',hint:'Used after BL / documents are ready for courier.',prompt:'Write an email from Avon Flavours to [BUYER / FREIGHT FORWARDER] confirming courier of original shipping documents for Invoice No. [INV NO.]. Documents couriered: Commercial Invoice, Packing List, Bill of Lading, COA, COO, etc. Courier: [DHL/FedEx/DTDC]. Tracking No.: [NUMBER]. Expected delivery: [DATE]. Request acknowledgement upon receipt.'},
+  {dept:'rd',deptLabel:'R&D / Flavour',icon:'🧪',tag:'Development Brief',title:'New Seasoning Development Brief to R&D Team',preview:'Internal brief for developing a new custom flavour.',hint:'Be specific about target application and market.',prompt:'Write an internal R&D development brief from Avon Flavours Sales/Management to the Flavour Development team. Objective: Develop a new [FLAVOUR TYPE e.g. Peri Peri / Cheesy Jalapeno / Butter Garlic] seasoning for [TARGET APPLICATION e.g. extruded snacks, popcorn, roasted nuts]. Target market: [DOMESTIC/EXPORT, REGION]. Key requirements: Flavour intensity [mild/medium/hot], colour [GOLDEN/ORANGE/RED], moisture max [%], shelf life [MONTHS], no [ALLERGENS/ARTIFICIAL COLOURS/MSG if applicable]. Reference: [ANY REFERENCE PRODUCT]. Timeline for trial: [DATE]. Target cost: Rs.[X]/kg.'},
+  {dept:'rd',deptLabel:'R&D / Flavour',icon:'🧪',tag:'Trial Feedback',title:'Share R&D Trial Sample Feedback with Team',preview:'Internal feedback note after tasting and evaluating trial.',hint:'Structured feedback speeds up iteration.',prompt:'Write an internal R&D trial evaluation note for Avon Flavours. Product trial: [PRODUCT CODE / NAME]. Trial date: [DATE]. Evaluated by: [NAMES]. Parameters: Aroma [RATING/COMMENT], Taste [RATING/COMMENT], Colour [COMMENT], Texture/mouthfeel [COMMENT], Aftertaste [COMMENT], Heat level [RATING]. Overall verdict: [APPROVED / NEEDS REVISION]. Suggested changes: [LIST CHANGES]. Next trial date: [DATE].'},
+  {dept:'rd',deptLabel:'R&D / Flavour',icon:'🧪',tag:'Competitor Analysis',title:'Request Competitor Flavour Market Analysis',preview:'Prompt AI to analyse market trends for a flavour category.',hint:'Use before launching a new product in a crowded segment.',prompt:'Act as a food industry analyst. Provide a market analysis for [FLAVOUR/SEASONING CATEGORY e.g. peri peri masala for snacks] in the Indian B2B food ingredient market. Include: 1) Current market trend for this flavour, 2) Key competitors offering similar products, 3) Common applications in Indian snack industry, 4) Consumer preference shifts, 5) Gaps Avon Flavours could exploit. Keep analysis practical and usable for product development.'},
+  {dept:'rd',deptLabel:'R&D / Flavour',icon:'🧪',tag:'FSSAI Check',title:'Check FSSAI Compliance for an Ingredient',preview:'Use AI to verify if an ingredient is FSSAI-approved.',hint:'Always verify with regulatory team before production.',prompt:'Act as a food regulatory expert familiar with FSSAI regulations in India. For the ingredient [INGREDIENT NAME], provide: 1) Whether permitted under FSSAI for [CATEGORY e.g. snack seasonings / flavour enhancers], 2) Permitted levels if applicable, 3) Relevant FSSAI regulation or FSS Act section, 4) Labelling requirements, 5) Recent updates or restrictions. Note: for internal reference only — verify with regulatory team before use in production.'},
+  {dept:'hr',deptLabel:'HR & Admin',icon:'👥',tag:'Job Posting',title:'Write a Job Description for Avon Flavours',preview:'Post for a role in sales, production, or accounts.',hint:'Specify department, location, and experience required.',prompt:'Write a professional job posting for Avon Flavours Pvt. Ltd. for the role of [JOB TITLE] in our [DEPARTMENT] team based at [LOCATION]. Responsibilities: [LIST 4-5 KEY DUTIES]. Required qualifications: [EDUCATION + EXPERIENCE]. Skills: [LIST 3-5 SKILLS]. Industry preference: Food / FMCG / Flavour industry preferred. Salary: [RANGE or NEGOTIABLE]. How to apply: [EMAIL or LINK]. Tone: professional, welcoming.'},
+  {dept:'hr',deptLabel:'HR & Admin',icon:'👥',tag:'Offer Letter',title:'Draft Offer Letter for New Employee',preview:'Formal offer letter for a new hire at Avon Flavours.',hint:'Review with HR/legal before sending.',prompt:'Draft a formal offer letter from Avon Flavours Pvt. Ltd. to [CANDIDATE NAME] for the position of [DESIGNATION] in [DEPARTMENT]. Details: CTC Rs.[AMOUNT] per annum, Joining Date: [DATE], Reporting to: [MANAGER TITLE], Probation: 6 months, Leave entitlement: as per company policy, Location: [CITY]. Include standard confidentiality clause and ask candidate to sign and return. Tone: formal, welcoming, legally sound.'},
+  {dept:'hr',deptLabel:'HR & Admin',icon:'👥',tag:'Warning Letter',title:'Issue Warning Letter to Employee',preview:'Official warning for misconduct or performance issues.',hint:'Document properly — essential for HR records.',prompt:'Write a formal warning letter from Avon Flavours HR to [EMPLOYEE NAME], [DESIGNATION], [DEPARTMENT]. Reason: [SPECIFIC ISSUE e.g. repeated late attendance / insubordination / quality negligence]. Date of incident(s): [DATE]. This constitutes a [FIRST/SECOND] official warning. Expected corrective action and timeline. Consequence of recurrence. Ask employee to acknowledge receipt. Tone: formal, factual, firm.'},
+  {dept:'hr',deptLabel:'HR & Admin',icon:'👥',tag:'Internal Circular',title:'Internal Company Circular / Announcement',preview:'Official internal announcement for policy or event.',hint:'Use for policy changes, holiday notices, meetings.',prompt:'Write an internal circular from Avon Flavours Management / HR Head to all employees regarding [SUBJECT e.g. new attendance policy / office timing change / factory safety drill]. Effective date: [DATE]. Key points: [LIST 3-4 POINTS]. Action required from employees: [WHAT THEY NEED TO DO]. Contact for queries: [NAME/DEPARTMENT]. Format: Official circular with From/To/Date/Subject header.'},
+  {dept:'hr',deptLabel:'HR & Admin',icon:'👥',tag:'Performance Review',title:'Draft Employee Performance Review Summary',preview:'Annual or mid-year review summary for an employee.',hint:'Use as a template — fill with actual metrics.',prompt:'Write an employee performance review summary for Avon Flavours for [EMPLOYEE NAME], [DESIGNATION]. Review period: [DATES]. Parameters: 1) Target vs Achievement: [DATA], 2) Quality of work: [COMMENT], 3) Punctuality and discipline: [COMMENT], 4) Team collaboration: [COMMENT], 5) Initiative and learning: [COMMENT]. Overall rating: [EXCELLENT/GOOD/AVERAGE/NEEDS IMPROVEMENT]. Recommendations: [PROMOTION / INCREMENT / TRAINING / WARNING]. Reviewer: [MANAGER NAME].'},
+];
+
+// ── DATA: MAILS ────────────────────────────────────────
+var MAILS = [
+  {cat:'leave',catLabel:'Leave & HR',type:'internal',icon:'🏢',tag:'Leave Application',title:'Apply for Casual / Sick Leave',preview:'Write a leave application to your manager or HR.',hint:'Replace dates, reason, and your department.',subject:'Leave Application – [YOUR NAME] – [DATES]',body:'Dear [Manager Name / HR],\n\nI am writing to formally request [casual / sick / earned] leave from [START DATE] to [END DATE] (total [X] working days) due to [REASON: personal work / health / family emergency / planned vacation].\n\nDuring my absence, [NAME OF COLLEAGUE] will handle urgent matters, and I will ensure all pending work is completed / handed over before I leave.\n\nI would be grateful if my leave application is approved at the earliest.\n\nThank you for your consideration.\n\nRegards,\n[YOUR NAME]\n[DESIGNATION] | [DEPARTMENT]\nAvon Flavours Pvt. Ltd.'},
+  {cat:'leave',catLabel:'Leave & HR',type:'internal',icon:'🏢',tag:'Work From Home',title:'Request for Work From Home',preview:'Formal WFH request to your reporting manager.',hint:'Keep reason brief and professional.',subject:'WFH Request – [DATE / DATE RANGE] – [YOUR NAME]',body:'Dear [Manager Name],\n\nI would like to request permission to work from home on [DATE / DATES] due to [REASON: personal commitment / health issue / internet or system availability].\n\nI will remain fully available on phone, email, and WhatsApp during regular working hours and ensure all assigned tasks are completed without disruption.\n\nKindly grant approval at your convenience.\n\nThank you,\n[YOUR NAME]\n[DESIGNATION] | [DEPARTMENT]\nAvon Flavours Pvt. Ltd.'},
+  {cat:'leave',catLabel:'Leave & HR',type:'internal',icon:'🏢',tag:'Handover Note',title:'Work Handover Email Before Leave',preview:'Handover pending tasks to a colleague before absence.',hint:'Be specific about what needs urgent attention.',subject:'Work Handover – [YOUR NAME] – Leave from [DATES]',body:'Dear [Colleague Name],\n\nI will be on leave from [START DATE] to [END DATE]. Please find below the handover details for tasks that require attention during my absence:\n\n1. [TASK NAME] – [STATUS] – Action required: [WHAT TO DO]\n2. [TASK NAME] – [STATUS] – Action required: [WHAT TO DO]\n3. [CLIENT / VENDOR NAME] – [PENDING MATTER] – Contact if urgent: [PHONE/EMAIL]\n\nFor any urgent matters, I can be reached at [PHONE NUMBER] in case of emergency.\n\nThank you for covering during my absence.\n\nBest regards,\n[YOUR NAME]\n[DESIGNATION] | [DEPARTMENT]'},
+  {cat:'internal',catLabel:'Internal Mails',type:'internal',icon:'🏢',tag:'Meeting Request',title:'Schedule an Internal Team Meeting',preview:'Request for internal meeting — production, sales, or review.',hint:'Specify agenda so recipients come prepared.',subject:'Meeting Request – [SUBJECT] – [PROPOSED DATE]',body:'Dear Team / [Name],\n\nI would like to schedule a meeting to discuss [AGENDA: monthly review / new product launch / process improvement / client escalation].\n\nProposed Date & Time: [DATE], [TIME]\nDuration: Approximately [X] minutes / 1 hour\nVenue / Platform: [OFFICE / GOOGLE MEET / ZOOM]\nAttendees: [LIST NAMES / DEPARTMENTS]\n\nPlease confirm your availability by [DATE]. If the proposed time is inconvenient, do share an alternate slot.\n\nRegards,\n[YOUR NAME]\n[DESIGNATION] | [DEPARTMENT]\nAvon Flavours Pvt. Ltd.'},
+  {cat:'internal',catLabel:'Internal Mails',type:'internal',icon:'🏢',tag:'Expense Reimbursement',title:'Request for Expense Reimbursement',preview:'Claim travel, food, or other business expenses.',hint:'Always attach bills/receipts with the request.',subject:'Expense Reimbursement Request – [YOUR NAME] – [MONTH]',body:'Dear [HR / Accounts / Manager Name],\n\nI am submitting the following expense reimbursement claim for the period [DATE / MONTH]:\n\n1. [EXPENSE TYPE e.g. Travel – Train/Auto] – Rs.[AMOUNT] – [DATE] – [PURPOSE]\n2. [EXPENSE TYPE e.g. Client Entertainment / Food] – Rs.[AMOUNT] – [DATE] – [PURPOSE]\n3. [EXPENSE TYPE e.g. Courier / Printing] – Rs.[AMOUNT] – [DATE] – [PURPOSE]\n\nTotal Claim: Rs.[TOTAL AMOUNT]\n\nReceipts / bills are attached herewith for verification. Kindly process the reimbursement at the earliest.\n\nThank you,\n[YOUR NAME]\n[DESIGNATION] | [DEPARTMENT]'},
+  {cat:'internal',catLabel:'Internal Mails',type:'internal',icon:'🏢',tag:'Internal Complaint',title:'Internal Grievance or Workplace Complaint',preview:'Raise a concern or complaint to HR professionally.',hint:'Stick to facts. Avoid emotional language.',subject:'Grievance / Workplace Concern – [YOUR NAME] – [DATE]',body:'Dear [HR Manager / Head of Department],\n\nI am writing to formally raise a concern regarding [BRIEF DESCRIPTION OF ISSUE e.g. workplace behaviour, workload, safety issue, inter-department conflict].\n\nDetails of the incident / ongoing issue:\n- Date(s) of occurrence: [DATE(S)]\n- Persons involved: [NAME / ROLE if relevant]\n- Description: [FACTUAL DESCRIPTION]\n- Impact on my work: [HOW IT IS AFFECTING YOUR WORK OR WELLBEING]\n\nI request a private discussion at the earliest to resolve this matter constructively. I would appreciate your confidentiality in handling this matter.\n\nThank you,\n[YOUR NAME]\n[DESIGNATION] | [DEPARTMENT]'},
+  {cat:'internal',catLabel:'Internal Mails',type:'internal',icon:'🏢',tag:'Permission Request',title:'Request for Early Exit / Late Arrival',preview:'Seek approval to leave early or arrive late on a specific day.',hint:'Keep it brief and give advance notice.',subject:'Permission Request – Early Exit / Late Arrival – [DATE]',body:'Dear [Manager Name],\n\nI would like to request permission to [leave early at [TIME] / arrive late at [TIME]] on [DATE] due to [BRIEF REASON: medical appointment / personal work / family commitment].\n\nI will ensure that my work for the day is completed in advance and there will be no impact on pending tasks.\n\nPlease grant approval at your convenience.\n\nThank you,\n[YOUR NAME]\n[DESIGNATION] | [DEPARTMENT]'},
+  {cat:'internal',catLabel:'Internal Mails',type:'internal',icon:'🏢',tag:'Appreciation Mail',title:'Thank You / Appreciation Mail to Colleague',preview:'Recognise a colleague\'s effort after a successful task.',hint:'Specific praise is more meaningful than general.',subject:'Thank You – [OCCASION / PROJECT NAME]',body:'Dear [Colleague Name / Team],\n\nI wanted to take a moment to appreciate your efforts on [SPECIFIC TASK / PROJECT / SITUATION e.g. the dispatch urgency last week, the year-end accounts reconciliation].\n\nYour [SPECIFIC CONTRIBUTION e.g. quick turnaround, attention to detail, willingness to go the extra mile] made a real difference and helped us [OUTCOME e.g. deliver on time, keep the client happy, meet the deadline].\n\nThank you for your dedication. It does not go unnoticed.\n\nWarm regards,\n[YOUR NAME]\n[DESIGNATION] | [DEPARTMENT]\nAvon Flavours Pvt. Ltd.'},
+  {cat:'client',catLabel:'Client Communication',type:'external',icon:'📧',tag:'Company Introduction',title:'Introduce Avon Flavours to a New Prospect',preview:'First-contact email introducing our company and products.',hint:'Keep it short — aim to open a conversation, not close a sale.',subject:'Introducing Avon Flavours – Seasonings & Flavours Manufacturer',body:'Dear [Contact Name],\n\nI hope this email finds you well.\n\nI am [YOUR NAME] from Avon Flavours Pvt. Ltd., a B2B manufacturer of premium seasonings, masala blends, and food flavours based in India. We cater to snack manufacturers, food processors, and FMCG brands across India and internationally.\n\nWe specialise in custom flavour development, bulk supply, and consistent quality at competitive prices — backed by FSSAI certification and [OTHER CERTIFICATIONS if applicable].\n\nI would love the opportunity to share our product catalogue and send you a sample for evaluation.\n\nWould you be available for a brief call this week?\n\nBest regards,\n[YOUR NAME]\n[DESIGNATION] | Avon Flavours Pvt. Ltd.\n[PHONE] | [EMAIL]'},
+  {cat:'client',catLabel:'Client Communication',type:'external',icon:'📧',tag:'Post-Meeting Thanks',title:'Thank You Mail After First Meeting or Call',preview:'Post-meeting mail to leave a professional impression.',hint:'Send within 24 hours of the meeting.',subject:'Thank You for Your Time – [DATE]',body:'Dear [Client Name],\n\nThank you for taking the time to speak with us [today / on DATE]. It was a pleasure learning more about your requirements and sharing what Avon Flavours can offer.\n\nAs discussed, I will [share our product catalogue / send samples of [PRODUCT] / send a quotation by [DATE]].\n\nIf you have any questions in the meantime, please feel free to reach out. We look forward to the opportunity of working with you.\n\nWarm regards,\n[YOUR NAME]\n[DESIGNATION] | Avon Flavours Pvt. Ltd.\n[PHONE] | [EMAIL]'},
+  {cat:'client',catLabel:'Client Communication',type:'external',icon:'📧',tag:'Complaint Response',title:'Respond to Client Complaint Professionally',preview:'Address a complaint with empathy and a clear resolution.',hint:'Acknowledge first, then solve. Never be defensive.',subject:'Re: Your Concern Regarding [ORDER / PRODUCT] – [INV/PO NO.]',body:'Dear [Client Name],\n\nThank you for bringing this to our attention. We sincerely apologise for the inconvenience caused regarding [BRIEF DESCRIPTION OF ISSUE: quality concern / delivery delay / billing error].\n\nWe have reviewed the matter internally and wish to assure you that this is not reflective of our usual standards.\n\nTo resolve this, we are [CORRECTIVE ACTION: replacing the goods / issuing a credit note / dispatching balance quantity by DATE / investigating the root cause].\n\nWe value your business deeply and are committed to ensuring this does not recur. Please do not hesitate to call me directly on [PHONE] if you wish to discuss further.\n\nThank you for your patience and understanding.\n\nWarm regards,\n[YOUR NAME]\n[DESIGNATION] | Avon Flavours Pvt. Ltd.'},
+  {cat:'client',catLabel:'Client Communication',type:'external',icon:'📧',tag:'Quote Follow-Up',title:'Follow-Up After Sending Quotation',preview:'Chase a client who has not responded to a quote.',hint:'Ask a question to open the dialogue, not just push the sale.',subject:'Following Up on Our Quotation – [PRODUCT] – [DATE]',body:'Dear [Client Name],\n\nI hope you are doing well. I wanted to follow up on the quotation we shared for [PRODUCT NAME] on [DATE].\n\nWe understand you may still be evaluating options. If you have any questions about our pricing, specifications, or lead times — or if you would like us to adjust the proposal — please do let us know.\n\nWe would also be happy to send a small trial sample before you commit to a larger order.\n\nLooking forward to your response.\n\nBest regards,\n[YOUR NAME]\n[DESIGNATION] | Avon Flavours Pvt. Ltd.\n[PHONE]'},
+  {cat:'client',catLabel:'Client Communication',type:'external',icon:'📧',tag:'Sample Dispatch',title:'Inform Client That Sample Has Been Dispatched',preview:'Notify prospect that their requested sample is on the way.',hint:'Include tracking and what to look for in evaluation.',subject:'Sample Dispatched – [PRODUCT NAME] – [COURIER DETAILS]',body:'Dear [Client Name],\n\nI am pleased to inform you that we have dispatched the sample of [PRODUCT NAME] for your evaluation.\n\nCourier: [DHL / BlueDart / DTDC / Speed Post]\nTracking No.: [NUMBER]\nExpected Delivery: [DATE]\n\nThe sample is packed in [X grams / X kg] and is ready for use in [SNACK APPLICATION / FRYING / DRY BLEND etc.].\n\nWe recommend evaluating it for [FLAVOUR INTENSITY / COLOUR / AROMA / SHELF LIFE]. Please feel free to share your feedback — we can adjust the profile based on your preference.\n\nLooking forward to hearing from you.\n\nBest regards,\n[YOUR NAME]\n[DESIGNATION] | Avon Flavours Pvt. Ltd.\n[PHONE]'},
+  {cat:'vendor',catLabel:'Vendor / Supplier',type:'external',icon:'🤝',tag:'Purchase Order',title:'Send Purchase Order to Supplier',preview:'Issue a formal purchase order via email.',hint:'Always attach the PO document as a PDF.',subject:'Purchase Order No. [PO NO.] – [PRODUCT] – Avon Flavours',body:'Dear [Supplier Name],\n\nPlease find attached our Purchase Order No. [PO NO.] dated [DATE] for your records.\n\nPO Details:\n- Product: [RAW MATERIAL / INGREDIENT NAME]\n- Quantity: [KG / MT]\n- Rate: Rs.[RATE] per kg (as agreed)\n- Delivery by: [DATE]\n- Delivery address: Avon Flavours Pvt. Ltd., [FACTORY ADDRESS]\n- Payment terms: [ADVANCE / NET X DAYS]\n\nKindly confirm receipt of this PO and share an expected dispatch date. Please ensure the material is accompanied by a valid COA as per specifications.\n\nRegards,\n[YOUR NAME]\nPurchase Department | Avon Flavours Pvt. Ltd.'},
+  {cat:'vendor',catLabel:'Vendor / Supplier',type:'external',icon:'🤝',tag:'Delivery Follow-Up',title:'Follow Up on Pending Material Delivery',preview:'Chase a supplier for overdue raw material delivery.',hint:'Be firm but keep the tone professional.',subject:'Reminder – Pending Delivery Against PO No. [PO NO.]',body:'Dear [Supplier Name],\n\nThis is a reminder regarding our Purchase Order No. [PO NO.] for [PRODUCT NAME] — [QUANTITY], which was due for delivery on [DUE DATE].\n\nWe have not yet received the material, and this is causing a disruption to our production schedule. We request you to share the current dispatch status and expected delivery date immediately.\n\nIf there is any issue on your end, please inform us at once so we can make alternate arrangements. Please note that continued delays may impact our future ordering decisions.\n\nRegards,\n[YOUR NAME]\nPurchase Department | Avon Flavours Pvt. Ltd.\n[PHONE]'},
+  {cat:'vendor',catLabel:'Vendor / Supplier',type:'external',icon:'🤝',tag:'COA Request',title:'Request Certificate of Analysis from Supplier',preview:'Ask supplier to share COA for incoming raw material.',hint:'Should be received before or with every delivery.',subject:'Request for COA – [MATERIAL NAME] – PO [PO NO.]',body:'Dear [Supplier Name],\n\nWe request you to share the Certificate of Analysis (COA) for the following material supplied against our PO No. [PO NO.]:\n\nMaterial: [NAME]\nBatch No. / Lot No.: [NUMBER]\nQuantity Supplied: [KG]\nDate of Supply: [DATE]\n\nThe COA should include: Moisture %, Purity, Microbial counts, Shelf life, Allergen declaration as per our standard specifications.\n\nPlease share the same at the earliest to complete our incoming quality check.\n\nRegards,\n[YOUR NAME]\nQuality / Purchase Department | Avon Flavours Pvt. Ltd.'},
+  {cat:'ops',catLabel:'Operations',type:'internal',icon:'⚙️',tag:'Production Update',title:'Share Daily/Weekly Production Update with Team',preview:'Internal production status update across departments.',hint:'Useful to keep sales, billing, and dispatch aligned.',subject:'Production Update – [DATE / WEEK]',body:'Dear Team,\n\nHere is the production update for [DATE / WEEK OF DATE]:\n\n1. [PRODUCT NAME] – Target: [QTY] kg – Produced: [QTY] kg – Status: [ON TRACK / DELAYED / COMPLETED]\n2. [PRODUCT NAME] – Target: [QTY] kg – Produced: [QTY] kg – Status: [ON TRACK / DELAYED / COMPLETED]\n\nPending from previous batches: [DETAILS if any]\nUpcoming planned production (next 2 days): [DETAILS]\n\nNote: [ANY SPECIAL INSTRUCTIONS / MATERIAL SHORTAGE / MACHINE DOWNTIME if applicable]\n\nPlease align your dispatch planning and client communication accordingly.\n\nRegards,\n[YOUR NAME]\nProduction / Operations | Avon Flavours Pvt. Ltd.'},
+  {cat:'ops',catLabel:'Operations',type:'internal',icon:'⚙️',tag:'Low Stock Alert',title:'Low Stock Alert – Raw Material or Finished Goods',preview:'Raise an alert when inventory is running critically low.',hint:'Always mention expected days of stock remaining.',subject:'URGENT – Low Stock Alert – [MATERIAL / PRODUCT NAME]',body:'Dear [Purchase Manager / Management],\n\nThis is to bring to your immediate attention that the stock of [RAW MATERIAL / FINISHED PRODUCT NAME] has fallen to a critical level.\n\nCurrent Stock: [QTY] kg\nMinimum Required: [QTY] kg\nExpected days of stock remaining: [X days] (based on current production plan)\n\nPending orders that will be affected: [LIST PO/CLIENT NAMES if any]\n\nImmediate action requested: [Place purchase order / expedite existing PO / explore alternate supplier]\n\nPlease confirm the steps being taken at the earliest to avoid any production or dispatch disruption.\n\nRegards,\n[YOUR NAME]\n[DESIGNATION] | Avon Flavours Pvt. Ltd.'},
+  {cat:'ops',catLabel:'Operations',type:'internal',icon:'⚙️',tag:'Quality Hold',title:'Internal Quality Hold Notification',preview:'Put a production batch on hold due to quality issue.',hint:'Stop dispatch until resolved — include batch details.',subject:'QUALITY HOLD – Batch [BATCH NO.] – [PRODUCT NAME]',body:'Dear [Team / Department Heads],\n\nThis is to inform you that the following batch has been placed on QUALITY HOLD pending investigation:\n\nProduct: [PRODUCT NAME]\nBatch No.: [BATCH NO.]\nQuantity: [KG]\nDate of Production: [DATE]\nReason for Hold: [DESCRIBE ISSUE e.g. colour deviation, moisture above spec, aroma off-note]\n\nNo dispatch of this batch is to be done until further notice from the Quality team.\n\nA root cause analysis is underway and a decision on [rework / rejection / conditional release] will be communicated by [DATE].\n\nPlease ensure the held stock is segregated and labelled clearly.\n\nRegards,\n[YOUR NAME]\nQuality Department | Avon Flavours Pvt. Ltd.'},
+  {cat:'escalation',catLabel:'Escalation & Complaints',type:'external',icon:'🔺',tag:'Client Escalation',title:'Escalation Mail to Management for Client Issue',preview:'Escalate a serious client issue to senior management.',hint:'Use when front-line resolution has failed.',subject:'ESCALATION – Client Issue – [CLIENT NAME] – [DATE]',body:'Dear [Senior Manager / Director Name],\n\nI am escalating the following client concern that has not been resolved at our level and requires your immediate attention.\n\nClient: [CLIENT NAME / COMPANY]\nIssue: [BRIEF DESCRIPTION]\nDate first reported: [DATE]\nSteps taken so far: [LIST ACTIONS TAKEN]\nCurrent status: [UNRESOLVED / ESCALATED BY CLIENT]\n\nThe client is [unhappy / threatening to cancel orders / escalating further]. I believe this requires your personal intervention to maintain the relationship.\n\nPlease advise on the next steps.\n\nRegards,\n[YOUR NAME]\n[DESIGNATION] | Avon Flavours Pvt. Ltd.'},
+  {cat:'escalation',catLabel:'Escalation & Complaints',type:'external',icon:'🔺',tag:'Final Payment Demand',title:'Strong Payment Recovery Mail to Defaulting Client',preview:'Final reminder before escalating to legal/management.',hint:'Use only after 2 reminders have been ignored.',subject:'FINAL REMINDER – Outstanding Payment – Invoice No. [INV NO.]',body:'Dear [Client Name],\n\nDespite our previous reminders dated [DATE OF 1ST REMINDER] and [DATE OF 2ND REMINDER], we regret to note that payment against Invoice No. [INV NO.] for Rs.[AMOUNT], due on [DUE DATE], remains outstanding.\n\nWe have given every consideration to your business relationship with us. However, we are now constrained to inform you that:\n\n1. Further supplies will be placed on hold until this payment is cleared.\n2. If payment is not received by [FINAL DEADLINE DATE], we will have no option but to escalate this matter to our legal team.\n\nWe sincerely hope it does not come to that and request immediate settlement.\n\nRegards,\n[YOUR NAME]\n[DESIGNATION] | Avon Flavours Pvt. Ltd.\n[PHONE]'},
+  {cat:'escalation',catLabel:'Escalation & Complaints',type:'external',icon:'🔺',tag:'Supplier Escalation',title:'Escalate Supplier Issue to Their Senior Team',preview:'Escalate unresolved vendor issue beyond contact person.',hint:'CC your own manager for record.',subject:'Escalation – Unresolved Matter – [ISSUE TYPE] – Avon Flavours',body:'Dear [Supplier Senior Contact / Manager],\n\nI am writing to escalate an unresolved matter that has been pending with your team for [X DAYS / WEEKS]:\n\nIssue: [DESCRIBE: quality complaint / delayed delivery / no response to PO]\nReference: PO No. [PO NO.] / Invoice No. [INV NO.] / Date of Original Communication: [DATE]\nSteps taken: [EMAILS SENT ON / CALLS MADE ON]\nCurrent status: [NO RESPONSE / PARTIAL RESOLUTION / UNSATISFACTORY RESPONSE]\n\nThis matter is causing operational impact on our production / dispatch. We expect a resolution or a clear commitment within [48 HOURS / X DAYS].\n\nIf this is not addressed promptly, we may need to reconsider our procurement decisions with your organisation.\n\nRegards,\n[YOUR NAME]\nPurchase / Operations | Avon Flavours Pvt. Ltd.\n[PHONE]'},
+];
+
+// ── RENDER PROMPTS ─────────────────────────────────────
+function renderPrompts() {
+  var container = document.getElementById('promptsContainer');
+  container.innerHTML = '';
+  var seen = {};
+  var total = 0;
+  for (var i = 0; i < PROMPTS.length; i++) {
+    var p = PROMPTS[i];
+    var deptMatch = currentDept === 'all' || p.dept === currentDept;
+    var s = currentSearch;
+    var searchMatch = !s || p.title.toLowerCase().indexOf(s) > -1 || p.tag.toLowerCase().indexOf(s) > -1 || p.preview.toLowerCase().indexOf(s) > -1 || p.prompt.toLowerCase().indexOf(s) > -1 || p.deptLabel.toLowerCase().indexOf(s) > -1;
+    if (!deptMatch || !searchMatch) continue;
+    total++;
+    if (!seen[p.dept]) {
+      seen[p.dept] = true;
+      var grp = document.createElement('div');
+      grp.className = 'dept-group visible';
+      grp.id = 'dg-' + p.dept;
+      grp.innerHTML = '<div class="dept-heading"><div class="dept-icon">' + p.icon + '</div><span class="dept-name">' + p.deptLabel + '</span><span class="dept-sub" id="ds-' + p.dept + '">0 prompts</span></div><div class="cards-grid" id="gc-' + p.dept + '"></div>';
+      container.appendChild(grp);
+    }
+    var grid = document.getElementById('gc-' + p.dept);
+    var card = document.createElement('div');
+    card.className = 'prompt-card';
+    card.setAttribute('data-idx', i);
+    card.innerHTML = '<div class="card-tag">' + p.tag + '</div><div class="card-title">' + p.title + '</div><div class="card-preview">' + p.preview + '</div><div class="card-footer"><button class="copy-btn" data-idx="' + i + '" data-type="prompt">Copy</button><span class="card-arrow">↗</span></div>';
+    grid.appendChild(card);
+    var sub = document.getElementById('ds-' + p.dept);
+    if (sub) sub.textContent = (parseInt(sub.textContent) + 1) + ' prompts';
+  }
+  document.getElementById('promptCount').textContent = total + ' prompt' + (total !== 1 ? 's' : '') + ' ' + (currentSearch ? 'found' : 'available');
+  if (total === 0) container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--gray)">No prompts found for &ldquo;<strong style="color:var(--white)">' + currentSearch + '</strong>&rdquo;</div>';
+}
+
+// ── RENDER MAILS ───────────────────────────────────────
+function renderMails() {
+  var container = document.getElementById('mailsContainer');
+  container.innerHTML = '';
+  var seen = {};
+  var total = 0;
+  for (var i = 0; i < MAILS.length; i++) {
+    var m = MAILS[i];
+    var catMatch = currentMailCat === 'all' || m.cat === currentMailCat || (currentMailCat === 'internal' && m.type === 'internal') || (currentMailCat === 'external' && m.type === 'external');
+    var s = currentSearch;
+    var searchMatch = !s || m.title.toLowerCase().indexOf(s) > -1 || m.tag.toLowerCase().indexOf(s) > -1 || m.preview.toLowerCase().indexOf(s) > -1 || m.body.toLowerCase().indexOf(s) > -1 || m.catLabel.toLowerCase().indexOf(s) > -1;
+    if (!catMatch || !searchMatch) continue;
+    total++;
+    if (!seen[m.cat]) {
+      seen[m.cat] = true;
+      var grp = document.createElement('div');
+      grp.className = 'mail-group visible';
+      grp.id = 'mg-' + m.cat;
+      grp.innerHTML = '<div class="mail-group-heading"><div class="mail-group-icon">' + m.icon + '</div><span class="mail-group-name">' + m.catLabel + '</span><span class="mail-group-sub" id="ms-' + m.cat + '">0 templates</span></div><div class="cards-grid" id="mc-' + m.cat + '"></div>';
+      container.appendChild(grp);
+    }
+    var grid = document.getElementById('mc-' + m.cat);
+    var card = document.createElement('div');
+    card.className = 'mail-card';
+    card.setAttribute('data-idx', i);
+    var badge = m.type === 'internal' ? 'internal' : 'external';
+    var btext = m.type === 'internal' ? 'Internal' : 'External';
+    card.innerHTML = '<div class="mail-type-badge ' + badge + '">' + btext + '</div><div class="card-tag">' + m.tag + '</div><div class="card-title">' + m.title + '</div><div class="card-preview">' + m.preview + '</div><div class="card-footer"><button class="mail-copy-btn" data-idx="' + i + '" data-type="mail">Copy</button><span class="card-arrow">↗</span></div>';
+    grid.appendChild(card);
+    var sub = document.getElementById('ms-' + m.cat);
+    if (sub) sub.textContent = (parseInt(sub.textContent) + 1) + ' templates';
+  }
+  document.getElementById('mailCount').textContent = total + ' template' + (total !== 1 ? 's' : '') + ' ' + (currentSearch ? 'found' : 'available');
+  if (total === 0) container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--gray)">No templates found for &ldquo;<strong style="color:var(--white)">' + currentSearch + '</strong>&rdquo;</div>';
+}
+
+// ── FILTERS ────────────────────────────────────────────
+function filterDept(dept, btn) {
+  currentDept = dept;
+  document.querySelectorAll('.dept-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderPrompts();
+}
+function filterMail(cat, btn) {
+  currentMailCat = cat;
+  document.querySelectorAll('.mail-cat-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderMails();
+}
+
+// ── COPY (event delegation) ────────────────────────────
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.copy-btn, .mail-copy-btn');
+  if (!btn) return;
+  var idx = parseInt(btn.getAttribute('data-idx'));
+  var type = btn.getAttribute('data-type');
+  var text;
+  if (type === 'prompt') {
+    text = PROMPTS[idx].prompt;
+  } else {
+    text = 'Subject: ' + MAILS[idx].subject + '\n\n' + MAILS[idx].body;
+  }
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function(){ btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
+});
+
+// ── OPEN MODAL (event delegation) ─────────────────────
+document.addEventListener('click', function(e) {
+  var card = e.target.closest('.prompt-card, .mail-card');
+  if (!card) return;
+  if (e.target.closest('.copy-btn, .mail-copy-btn')) return;
+  var idx = parseInt(card.getAttribute('data-idx'));
+  var isPrompt = card.classList.contains('prompt-card');
+  currentModalType = isPrompt ? 'prompt' : 'mail';
+  var deptEl = document.getElementById('modalDept');
+  var copyBtn = document.getElementById('modalCopyBtn');
+  if (isPrompt) {
+    currentItem = PROMPTS[idx];
+    deptEl.textContent = currentItem.deptLabel;
+    deptEl.className = 'modal-dept';
+    document.getElementById('modalTitle').textContent = currentItem.title;
+    document.getElementById('modalPrompt').textContent = currentItem.prompt;
+    document.getElementById('modalHint').textContent = '💡 ' + currentItem.hint;
+    copyBtn.textContent = 'Copy Prompt to Clipboard';
+    copyBtn.className = 'modal-copy-btn';
+  } else {
+    currentItem = MAILS[idx];
+    deptEl.textContent = currentItem.catLabel + ' · ' + (currentItem.type === 'internal' ? 'Internal' : 'External');
+    deptEl.className = 'modal-dept blue';
+    document.getElementById('modalTitle').textContent = currentItem.title;
+    document.getElementById('modalPrompt').textContent = 'Subject: ' + currentItem.subject + '\n\n' + currentItem.body;
+    document.getElementById('modalHint').textContent = '💡 ' + currentItem.hint;
+    copyBtn.textContent = 'Copy Mail Template to Clipboard';
+    copyBtn.className = 'modal-copy-btn blue-btn';
+  }
+  copyBtn.classList.remove('copied');
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+
+// ── MODAL CLOSE & COPY ─────────────────────────────────
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function copyModal() {
+  if (!currentItem) return;
+  var text = currentModalType === 'prompt' ? currentItem.prompt : 'Subject: ' + currentItem.subject + '\n\n' + currentItem.body;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById('modalCopyBtn');
+    btn.textContent = '✓ Copied! Paste into your email or AI tool';
+    btn.classList.add('copied');
+    setTimeout(function(){
+      btn.textContent = currentModalType === 'prompt' ? 'Copy Prompt to Clipboard' : 'Copy Mail Template to Clipboard';
+      btn.classList.remove('copied');
+    }, 3000);
+  });
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+// ── INIT ───────────────────────────────────────────────
+renderPrompts();
+renderMails();
+</script>
+</body>
+</html>
